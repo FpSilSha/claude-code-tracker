@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if [[ "$OSTYPE" == msys* || "$OSTYPE" == cygwin* || -n "${WINDIR:-}" ]]; then
+  echo "Error: claude-code-tracker requires a Unix shell (macOS, Linux, or WSL)." >&2
+  exit 1
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INSTALL_DIR="$HOME/.claude/tracking"
 SETTINGS="$HOME/.claude/settings.json"
@@ -22,6 +27,18 @@ else
   else
       echo "Nothing to remove at $INSTALL_DIR"
   fi
+fi
+
+# Remove skills this package installed
+if [[ -d "$SCRIPT_DIR/skills" ]]; then
+  for skill_dir in "$SCRIPT_DIR/skills"/*/; do
+    skill_name="$(basename "$skill_dir")"
+    dest="$HOME/.claude/skills/$skill_name"
+    if [[ -d "$dest" ]]; then
+      rm -rf "$dest"
+      echo "Skill removed: $skill_name"
+    fi
+  done
 fi
 
 # Remove hook entry from settings.json

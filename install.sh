@@ -36,6 +36,16 @@ else
   echo "Scripts installed to $INSTALL_DIR"
 fi
 
+# Install skills to ~/.claude/skills/
+if [[ -d "$SCRIPT_DIR/skills" ]]; then
+  for skill_dir in "$SCRIPT_DIR/skills"/*/; do
+    skill_name="$(basename "$skill_dir")"
+    mkdir -p "$HOME/.claude/skills/$skill_name"
+    cp "$skill_dir/SKILL.md" "$HOME/.claude/skills/$skill_name/SKILL.md"
+    echo "Skill installed: $skill_name"
+  done
+fi
+
 # Patch settings.json — add Stop hook if not already present
 python3 - "$SETTINGS" "$HOOK_CMD" <<'PYEOF'
 import sys, json, os
