@@ -43,14 +43,17 @@ def slugify_path(abs_path):
 
     Claude Code slugifies project paths by replacing ``/`` with ``-``.
     On Windows paths use ``\\`` so we first normalise to forward slashes,
-    then apply the same replacement.
+    then apply the same replacement.  The drive-letter colon (e.g. ``C:``)
+    is also stripped because Claude Code removes it before slugifying.
 
     Examples::
 
         /Users/me/project       -> -Users-me-project
-        C:\\Users\\me\\project  -> C:-Users-me-project
+        C:\\Users\\me\\project  -> C--Users-me-project
     """
     normalised = abs_path.replace("\\", "/")
+    # Claude Code replaces the colon from Windows drive letters with "-" (C: -> C-)
+    normalised = normalised.replace(":", "-")
     return normalised.replace("/", "-")
 
 
