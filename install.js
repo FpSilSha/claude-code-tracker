@@ -233,6 +233,45 @@ if (projectRoot) {
   }
 }
 
+// -----------------------------------------------------------------------
+// Check project .gitignore — warn if .claude/ is not covered
+// -----------------------------------------------------------------------
+function checkGitignore(projectRoot) {
+  if (!projectRoot) return;
+  const gitignorePath = path.join(projectRoot, ".gitignore");
+  let covered = false;
+  if (fs.existsSync(gitignorePath)) {
+    const lines = fs.readFileSync(gitignorePath, "utf8").split(/\r?\n/);
+    covered = lines.some((l) => {
+      const trimmed = l.trim();
+      return (
+        trimmed === ".claude" ||
+        trimmed === ".claude/" ||
+        trimmed === "**/.claude" ||
+        trimmed === "**/.claude/"
+      );
+    });
+  }
+  if (!covered) {
+    console.log(
+      "\n" +
+      "╔══════════════════════════════════════════════════════════════╗\n" +
+      "║  ⚠  WARNING: .claude/ is NOT in your .gitignore             ║\n" +
+      "║                                                              ║\n" +
+      "║  Your tracking data (costs, tokens, key prompts) will be    ║\n" +
+      "║  committed to git and pushed to GitHub.                     ║\n" +
+      "║                                                              ║\n" +
+      "║  Add this line to your project's .gitignore:               ║\n" +
+      "║                                                              ║\n" +
+      "║      .claude/                                               ║\n" +
+      "║                                                              ║\n" +
+      "╚══════════════════════════════════════════════════════════════╝"
+    );
+  }
+}
+
+checkGitignore(projectRoot);
+
 console.log(
   "\nclaude-code-tracker installed successfully.\n" +
     "Restart Claude Code to activate tracking."
