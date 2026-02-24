@@ -14,6 +14,7 @@
   - `platform_utils.py` — shared module for OS detection, path slugification, Python command resolution, and file opening
   - `bin/claude-tracker-cost.js` — npm bin wrapper (Windows can't execute `.py` shebangs)
 - **`/view-tracking` skill** — added Windows `start` command branch alongside existing `open` (macOS) and `xdg-open` (Linux)
+- **`.gitignore` warning on install** — both `install.js` and `install.sh` now check whether `.claude/` is covered by the project's `.gitignore` at install time. If not, a prominent box warning is printed reminding the user to add `.claude/` to prevent tracking data (costs, tokens, key prompts) from being committed to git. Warning only — the `.gitignore` is never modified automatically.
 
 ### Fixed
 - **Path slugification on Windows** — `C:\Users\...` now correctly produces `C--Users-...` slug (colon replaced with dash) matching Claude Code's on-disk format
